@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.SceneManagement;//LoadSceneを使うために必要
 public class PlayerController : MonoBehaviour {
     Rigidbody2D rigid2D;
     Animator animator;
@@ -11,15 +11,15 @@ public class PlayerController : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         this.rigid2D = GetComponent<Rigidbody2D>();
-	}
-	
-	// Update is called once per frame
-	void Update () {
+        this.animator = GetComponent<Animator>();
+    }
+
+    // Update is called once per frame
+    void Update () {
         //ジャンプする
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space)&&this.rigid2D.velocity.y==0)
         {
             this.rigid2D.AddForce(transform.up * this.jumpForce);
-            this.animator = GetComponent<Animator>();
         }
 
         //左右移動
@@ -43,5 +43,16 @@ public class PlayerController : MonoBehaviour {
 
         //プレイヤーの速度に応じてアニメーション速度を変える
         this.animator.speed = speedx / 2.0f;
+
+        if (transform.position.y < -10)
+        {
+            SceneManager.LoadScene("GameScene");
+        }
 	}
+    //ゴールに到達
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        Debug.Log("ゴール");
+        SceneManager.LoadScene("ClearScene");
+    }
 }
